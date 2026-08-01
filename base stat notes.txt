@@ -1,0 +1,14 @@
+Stat,Value,Notes
+Damage,145,One-shots most standard enemies
+Fire Rate,48 RPM (1.25 s between shots),Deliberate bolt-action / slow semi
+Magazine Size,5,Feels precious
+Reserve Ammo,20 (4 full reloads),Scarce
+Reload Time,3.1 s (tactical) / 3.8 s (empty),Heavy and committed
+ADS Time,0.55 s,Noticeably slower than most rifles
+Projectile Speed,620 m/s,"Clear travel time, requires leading"
+Bullet Drop,Noticeable after ~80 m,Becomes significant past 120 m
+Effective Range,40–180 m,Soft falloff starts at 140 m
+Hip-fire Accuracy,Very poor,Almost unusable
+ADS Movement Speed,35% of normal,Heavy commitment
+Recoil (Vertical),High single-shot kick,Recoverable with practice
+Recoil (Horizontal),Low,Predictable

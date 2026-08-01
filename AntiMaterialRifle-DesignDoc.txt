@@ -1,0 +1,75 @@
+# Anti-Material Rifle – Design Outline
+
+## 1. High Concept / Fantasy
+Bolt action sniper.
+
+## 2. Role & Fantasy in the Arsenal
+- Primary
+- Long range engagement
+- Punchy weapon meant to crack through enemy shells.
+
+## 3. Core Mechanics & Gunfeel
+- Bolt action, projectile.
+- high impact, slow cycle, limited ammo
+- Reloads 1 bullet at a time, can cancel reload with "fire".
+- Aiming slows the player.
+
+## 4. Upgrade Paths
+- Build Path #1
+- Build Path #2
+- Build Path #3
+
+## 5. Upgrade Grid Potential
+- Upgrade themes that transform it (e.g., “turns single shots into orbiting fungal spores”)
+- Example synergistic or “break the game” paths
+- Exotic shapes should always be larger and each exotic should be the same number of cells.
+
+## 6. Visual, Audio & Thematic Design
+- Appearance (robot industrial + fungal corruption elements)
+- Sound design goals
+- Flavor text / SAXON marketing blurb / in-world description
+
+## 7. Strengths, Weaknesses & Design Pillars
+- Break shells
+- Low fire rate, probably bad dps in a horde shooter.
+- Highlighting enemies for others and debuffing them.
+
+## 8. Success Criteria / Player Fantasy Checklist
+- Bullet list of the moments you want players to experience
+
+## 9. Universal Truths
+- Exotic shapes should always be larger than others and each exotic should be the same number of cells.
+- Upgrades should be about 30 in total.
+- Each weapon should have 3 upgrade paths that create different build options.
+
+## 10. Upgrades
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
