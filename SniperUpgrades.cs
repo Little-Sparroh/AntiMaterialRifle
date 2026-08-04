@@ -1,11 +1,14 @@
+using System;
+using System.Collections.Generic;
 using BepInEx.Logging;
 
 /// <summary>
 /// Registers all Anti-Material Rifle upgrades (ids 87422–87449).
-
+/// Optionally grants one collected+unlocked inventory instance of each.
 /// </summary>
 public static class SniperUpgrades
 {
+
     public const int IdHeavyGrain = 87422;
     public const int IdReserveLoad = 87423;
     public const int IdHullbreaker = 87424;
@@ -48,7 +51,12 @@ public static class SniperUpgrades
     public static void RegisterAll(ManualLogSource log = null)
     {
         if (_registered)
+        {
+            // Still top up inventory on re-entry (e.g. OnAwake postfix after first register).
+            GrantAllInstances(log);
             return;
+        }
+
 
         if (PlayerData.Instance == null)
         {
@@ -217,7 +225,6 @@ public static class SniperUpgrades
                 new UpgradeProperty[] { new SniperProp_Overkill() }, log)) ok++;
 
         if (ok == total)
-
         {
             _registered = true;
             log?.LogInfo($"[SniperUpgrades] Registered {ok}/{total} upgrades.");
@@ -228,9 +235,89 @@ public static class SniperUpgrades
             if (ok > 0)
                 _registered = true;
         }
+
+        if (_registered)
+            GrantAllInstances(log);
+    }
+
+    /// <summary>
+    /// Ensures the player owns at least one unlocked inventory instance of each
+    /// registered sniper upgrade (not skins). Idempotent — skips upgrades that
+    /// already have an instance. Does not auto-equip onto the hex grid.
+    /// </summary>
+    public static void GrantAllInstances(ManualLogSource log = null)
+    {
+        if (SparrohPlugin.GrantAllUpgrades != null && !SparrohPlugin.GrantAllUpgrades.Value)
+        {
+            log?.LogDebug("[SniperUpgrades] GrantAllUpgrades disabled via config.");
+            return;
+        }
+
+        if (PlayerData.Instance == null)
+        {
+            log?.LogDebug("[SniperUpgrades] GrantAllInstances: PlayerData.Instance null — skip.");
+            return;
+        }
+
+        IUpgradable gear = SparrohPlugin.ResolveRegisteredGear();
+        if (gear?.Info?.Upgrades == null)
+        {
+            log?.LogDebug("[SniperUpgrades] GrantAllInstances: gear/upgrades not ready — skip.");
+            return;
+        }
+
+        int granted = 0;
+        int already = 0;
+        int failed = 0;
+
+        List<Upgrade> upgrades = gear.Info.Upgrades;
+        for (int i = 0; i < upgrades.Count; i++)
+        {
+            Upgrade upgrade = upgrades[i];
+            if (upgrade == null || upgrade is SkinUpgrade)
+                continue;
+
+            try
+            {
+                UpgradeInfo info = PlayerData.GetUpgradeInfo(gear, upgrade);
+                int count = info?.Instances != null ? info.Instances.Count : 0;
+                if (count >= 1)
+                {
+                    // Ensure at least one is unlocked if somehow only collected.
+                    if (info.Instances != null)
+                    {
+                        for (int j = 0; j < info.Instances.Count; j++)
+                        {
+                            UpgradeInstance existing = info.Instances[j];
+                            if (existing != null && !existing.IsUnlocked)
+                                existing.Unlock(quiet: true);
+                        }
+                    }
+                    already++;
+                    continue;
+                }
+
+                UpgradeInstance instance = UpgradeRegistration.GrantTestInstance(
+                    gear, upgrade, unlock: true, quietUnlock: true, log: null);
+                if (instance != null)
+                    granted++;
+                else
+                    failed++;
+            }
+            catch (Exception ex)
+            {
+                failed++;
+                log?.LogWarning(
+                    $"[SniperUpgrades] Grant failed for '{upgrade.Name}' (id={upgrade.NumberID}): {ex.Message}");
+            }
+        }
+
+        log?.LogInfo(
+            $"[SniperUpgrades] GrantAllInstances: granted={granted} alreadyOwned={already} failed={failed}.");
     }
 
     private static bool Reg(
+
         IUpgradable gear,
         int id,
         string name,

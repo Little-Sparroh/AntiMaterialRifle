@@ -3,9 +3,9 @@ schemaVersion = "0.0.1"
 
 [package]
 namespace = "Sparroh"
-name = "BallisticSniper"
+name = "AntiMaterialRifle"
 description = "Anti-Material Rifle — a heavy kinetic bolt-action sniper for Mycopunk. High single-shot damage, low capacity, single-round reload."
-websiteUrl = "https://github.com/Little-Sparroh/BallisticSniper"
+websiteUrl = "https://github.com/Little-Sparroh/AntiMaterialRifle"
 containsNsfwContent = false
 
 [package.dependencies]
@@ -17,8 +17,8 @@ readme = "README.md"
 outdir = "build"
 
 [[build.copy]]
-source = "bin/Release/netstandard2.1/BallisticSniper.dll"
-target = "BepInEx/plugins/BallisticSniper.dll"
+source = "bin/Release/netstandard2.1/AntiMaterialRifle.dll"
+target = "BepInEx/plugins/AntiMaterialRifle.dll"
 
 [[build.copy]]
 source = "CHANGELOG.md"

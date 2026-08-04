@@ -1,7 +1,9 @@
 ﻿using System;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+
 
 /// <summary>
 /// Ballistic Sniper (Anti-Material Rifle) for Mycopunk.
@@ -13,8 +15,8 @@ using HarmonyLib;
 [MycoMod(null, ModFlags.IsSandbox)]
 public class SparrohPlugin : BaseUnityPlugin
 {
-    public const string PluginGUID = "sparroh.ballisticsniper";
-    public const string PluginName = "BallisticSniper";
+    public const string PluginGUID = "sparroh.antimaterialrifle";
+    public const string PluginName = "AntiMaterialRifle";
     public const string PluginVersion = "1.2.0";
 
 
@@ -38,6 +40,12 @@ public class SparrohPlugin : BaseUnityPlugin
     internal static new ManualLogSource Logger;
     internal static SparrohPlugin Instance;
 
+    /// <summary>
+    /// When true, grants one unlocked inventory instance of each sniper upgrade on load.
+    /// Does not auto-equip; only tops up ownership to 1 (idempotent).
+    /// </summary>
+    internal static ConfigEntry<bool> GrantAllUpgrades;
+
     /// <summary>Registered prefab / gear instance (null until registration succeeds).</summary>
     public static IUpgradable CustomWeaponPrefab;
 
@@ -50,7 +58,15 @@ public class SparrohPlugin : BaseUnityPlugin
         Instance = this;
         Logger = base.Logger;
 
+        GrantAllUpgrades = Config.Bind(
+            "Debug",
+            "GrantAllUpgrades",
+            true,
+            "Grant one unlocked inventory instance of each Anti-Material Rifle upgrade on load. " +
+            "Idempotent (tops up to 1). Disable before shipping if players should earn drops normally.");
+
         _harmony = new Harmony(PluginGUID);
+
 
         // Core boot patches first — must not throw.
         _harmony.PatchAll(typeof(GlobalLoadHook));
@@ -256,6 +272,10 @@ internal static class PlayerDataPersistenceHooks
                     $"equipped={gd.EquippedUpgradeCount} xp={gd.LevelXP} " +
                     $"HasUpgrades={PlayerData.HasUpgrades(gear)} HasGrid={gear.Info?.HasUpgradeGrid}.");
             }
+
+            // Top up inventory instances after save rebind (idempotent).
+            SniperUpgrades.GrantAllInstances(SparrohPlugin.Logger);
+
         }
         catch (Exception ex)
         {
